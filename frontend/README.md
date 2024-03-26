@@ -9,7 +9,7 @@ This application allows users to query information from a PDF document. Users ca
 The backend of this application is built using Python with the FastAPI framework. The backend server is run using uvcorn with the following command:
 
 
-    uvcorn main::app --reload 
+    uvcorn main:app --reload 
 
 ## Frontend 
 The frontend of the application is developed using React. It provides a user-friendly interface for uploading PDF files and querying information. The frontend is deployed on Vercel and can be accessed via this link.
