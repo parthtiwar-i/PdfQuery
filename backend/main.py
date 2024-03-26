@@ -39,8 +39,8 @@ async def upload_pdf(file: UploadFile = File(...)):
         contents = await file.read()
         # using PyPDF2
         pdf_reader = PdfReader(io.BytesIO(contents))
-        page_count = len(pdf_reader.pages)  # ignore
-        first_page_content = pdf_reader.pages[0].extract_text()  # ignore
+        # page_count = len(pdf_reader.pages)  # ignore
+        # first_page_content = pdf_reader.pages[0].extract_text()  # ignore
 
         text = ""
         for page in pdf_reader.pages:
@@ -78,12 +78,12 @@ async def upload_pdf(file: UploadFile = File(...)):
                         res = VectorStore.similarity_search(
                             query="Projects", k=3)
             except Exception as e:
-                print(f"Error deleting existing files: {e}")
+                return {"error": e}
 
         return {"page": res, "file_name": file.filename}
 
     except Exception as e:
-        print(f"Error processing PDF: {e}")
+        # print(f"Error processing PDF: {e}")
         return {"error": "Internal server error during processing."}
 
 
@@ -116,7 +116,7 @@ async def query(request: QueryRequest):
             llm_prompt_template = """You are an assistant for question-answering tasks.
                 Use the following context to answer the question.
                 If you don't know the answer, just say that you don't know.
-                Use five sentences maximum and keep the answer concise.\n
+                keep the answer concise.\n
                 Question: {query} \nContext: {docs} \nAnswer:"""
 
             llm_prompt = PromptTemplate.from_template(llm_prompt_template)
