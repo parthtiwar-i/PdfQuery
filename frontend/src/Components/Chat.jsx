@@ -35,11 +35,15 @@ const Chat = () => {
     };
     setQuery("");
     try {
-      const response = await axios.post("http://127.0.0.1:8000/query/", data, {
-        headers: {
-          "content-type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "https://pdfquery-c6g1.onrender.com/query/",
+        data,
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
       const aiResponse = {
         chat: response.data.response,
         img: "ai",
