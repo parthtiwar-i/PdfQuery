@@ -71,8 +71,9 @@ async def upload_pdf(file: UploadFile = File(...)):
                                 shutil.rmtree(os.path.join(root, dir_name))
                             except Exception as e:
                                 print(f"Error deleting folder {dir_name}: {e}")
-                        VectorStore = FAISS.from_texts(
-                            chunks, embedding=gemini_embeddings)
+
+                            VectorStore = FAISS.from_texts(
+                                chunks, embedding=gemini_embeddings)
                         VectorStore.save_local(file.filename)
                         res = VectorStore.similarity_search(
                             query="Projects", k=3)
