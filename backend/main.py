@@ -60,17 +60,27 @@ async def upload_pdf(file: UploadFile = File(...)):
         # embeddings = OpenAIEmbeddings()
         if os.path.exists(f"{store_name}.faiss"):
             VectorStore = FAISS.load_local(
-                f"{store_name}.faiss", gemini_embeddings)
+                file.filename, gemini_embeddings, allow_dangerous_deserialization=True)
         else:
-            VectorStore = FAISS.from_texts(chunks, embedding=gemini_embeddings)
-            VectorStore.save_local(f"{store_name}.faiss")
+            try:
+                # Find and delete folders containing index.faiss and index.pkl
+                for root, dirs, _ in os.walk(".", topdown=False):
+                    for dir_name in dirs:
+                        if os.path.exists(os.path.join(root, dir_name, "index.faiss")) and \
+                           os.path.exists(os.path.join(root, dir_name, "index.pkl")):
+                            try:
+                                shutil.rmtree(os.path.join(root, dir_name))
+                            except Exception as e:
+                                print(f"Error deleting folder {dir_name}: {e}")
+                        VectorStore = FAISS.from_texts(
+                            chunks, embedding=gemini_embeddings)
+                        VectorStore.save_local(file.filename)
+                        res = VectorStore.similarity_search(
+                            query="Projects", k=3)
+            except Exception as e:
+                print(f"Error deleting existing files: {e}")
 
-        res = VectorStore.similarity_search(query="Projects", k=3)
         return {"page": res, "file_name": file.filename}
-
-    except Exception as e:
-        print(f"Error processing PDF: {e}")
-        return {"error": "Internal server error during processing."}
 
     except Exception as e:
         print(f"Error processing PDF: {e}")
