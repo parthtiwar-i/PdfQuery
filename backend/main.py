@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 load_dotenv()
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -55,7 +56,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         store_name = file.filename[:-4]
 
         gemini_embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001")
+            model="models/embedding-001", api_key=GOOGLE_API_KEY)
         # embeddings = OpenAIEmbeddings()
         if os.path.exists(f"{store_name}.faiss"):
             VectorStore = FAISS.load_local(file.filename, gemini_embeddings)
