@@ -64,14 +64,14 @@ async def upload_pdf(file: UploadFile = File(...)):
         else:
             try:
                 # Find and delete folders containing index.faiss and index.pkl
-                # for root, dirs, _ in os.walk(".", topdown=False):
-                #     for dir_name in dirs:
-                #         if os.path.exists(os.path.join(root, dir_name, "index.faiss")) and \
-                #            os.path.exists(os.path.join(root, dir_name, "index.pkl")):
-                #             try:
-                #                 shutil.rmtree(os.path.join(root, dir_name))
-                #             except Exception as e:
-                #                 print(f"Error deleting folder {dir_name}: {e}")
+                for root, dirs, _ in os.walk(".", topdown=False):
+                    for dir_name in dirs:
+                        if os.path.exists(os.path.join(root, dir_name, "index.faiss")) and \
+                           os.path.exists(os.path.join(root, dir_name, "index.pkl")):
+                            try:
+                                shutil.rmtree(os.path.join(root, dir_name))
+                            except Exception as e:
+                                print(f"Error deleting folder {dir_name}: {e}")
                         VectorStore = FAISS.from_texts(
                             chunks, embedding=gemini_embeddings)
                         VectorStore.save_local(file.filename)
